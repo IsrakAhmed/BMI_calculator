@@ -1,7 +1,8 @@
 **BMI Calculator**
 
+
 **Description:**
-> This application will calculate BMI(Body mass index).
+> This application calculates BMI(Body mass index).
 > Body mass index (BMI) is a measure of body fat based on height and weight that applies to adult men and women.
 
 
