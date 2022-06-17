@@ -3,7 +3,7 @@ package home;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Objects;
+import java.text.DecimalFormat;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
@@ -12,11 +12,12 @@ public class UI {
 
     JFrame mainFrame,resultFrame;
     JPanel mainPanel,unitsPanel;
-    JLabel header,header2,age,gender,height,ft,inch_l,weight,pound_l;
-    JTextField ageT,feet,inch,pounds;
+    JLabel header,header2,age,gender,height,ft,inch_l,weight,pound_l,result;
+    JTextField ageT,feet,inch,pounds,resultT;
     JRadioButton genMale,genFemale;
     ButtonGroup bg;
-    JButton usUnits,metricUnits,calculate,clear,back;
+    JButton usUnits,metricUnits,calculate,clear,back,commentB;
+    Color color;
 
     UI(){
         mainFrame = new JFrame("BMI Calculator");
@@ -171,6 +172,7 @@ public class UI {
         metricUnits.setForeground(Color.black);
         feet.setBounds(170,338,190,25);
         inch.setBounds(0,0,0,0);
+        ft.setText("");
         inch_l.setText("cm");
         pound_l.setText("kg");
         usState = false;
@@ -185,24 +187,33 @@ public class UI {
             double weightM = parseDouble(pounds.getText());
             double heightM = 1;
 
-            if(usState){
-                double height2 = parseDouble(inch.getText());
-                heightM = (height1 * 12) + height2;
-                weightM = weightM * 703.0;
+            if(genMale.isSelected() || genFemale.isSelected()){
+                if(usState){
+                    double height2 = parseDouble(inch.getText());
+                    heightM = (height1 * 12) + height2;
+                    weightM = weightM * 703.0;
+                }
+
+                else if(metricState){
+                    heightM = height1 / 100;
+                }
+
+                Calculation calculation = new Calculation(ageM,heightM,weightM);
+
+                double bmi = calculation.calculate();
+                String commentM = calculation.getComment();
+                this.color = calculation.getColorName();
+
+                resultFrame(bmi,commentM);
+            }
+            else{
+                throw new RuntimeException("No gender");
             }
 
-            else if(metricState){
-                heightM = height1 / 100;
-            }
-
-            Calculation calculation = new Calculation(ageM,heightM,weightM);
-            double bmi = calculation.calculate();
-
-            resultFrame(bmi);
         }
         catch(Exception exception){
             JOptionPane.showMessageDialog(mainFrame,"Invalid Form");
-            System.out.println(exception);
+            exception.printStackTrace();
         }
     }
 
@@ -214,17 +225,44 @@ public class UI {
         pounds.setText("");
     }
 
-    void resultFrame(double bmi){
+    void resultFrame(double bmi,String commentM){
+
         resultFrame.setSize(500,680);
         resultFrame.setLocationRelativeTo(null);
         resultFrame.setLayout(null);
 
-        back.setBounds(158,555,150,35);
+        result = new JLabel("BMI");
+        result.setBounds(167,145,200,60);
+        result.setFont(new Font("Serif", Font.BOLD, 20));
+
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        resultT = new JTextField(""+df.format(bmi));
+        resultT.setBounds(243,163,65,25);
+        resultT.setFont(new Font("Serif", Font.BOLD, 20));
+        resultT.setEditable(false);
+
+        commentB = new JButton();
+        commentB.setText(commentM);
+        commentB.setBounds(162,250,150,35);
+        commentB.setBackground(color);
+        commentB.setRolloverEnabled(false);
+        commentB.setBorderPainted(false);
+
+        if((color.equals(new Color(235, 242, 0)))){
+            commentB.setForeground(new Color(0, 0, 0));
+        }
+        else{
+            commentB.setForeground(new Color(255, 255, 255));
+        }
+
+        back.setBounds(162,410,150,35);
         back.setBackground(Color.darkGray);
         back.setForeground(Color.white);
         back.addActionListener(this::clicked_Back);
 
-        resultFrame.add(back);
+        resultFrame.add(back); resultFrame.add(commentB);
+        resultFrame.add(result); resultFrame.add(resultT);
 
         resultFrame.add(mainPanel);
 
@@ -234,7 +272,16 @@ public class UI {
     }
 
     void clicked_Back(ActionEvent e){
+        if(metricState){
+            clicked_MetricUnits(e);
+        }
+        else if(usState){
+            clicked_UsUnits(e);
+        }
+
         mainFrame.add(mainPanel);
+        resultFrame.remove(resultT);
+        resultFrame.remove(commentB);
         resultFrame.setVisible(false);
         mainFrame.setVisible(true);
     }
