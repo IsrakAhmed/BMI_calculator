@@ -213,7 +213,7 @@ public class UI {
         }
         catch(Exception exception){
             JOptionPane.showMessageDialog(mainFrame,"Invalid Form");
-            exception.printStackTrace();
+            System.out.println(exception);
         }
     }
 

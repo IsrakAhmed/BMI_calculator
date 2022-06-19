@@ -16,5 +16,10 @@
 > Obesity = BMI of 30 or greater
 
 
+**Learn more about BMI from WHO**
+> [Link](https://www.who.int/europe/news-room/fact-sheets/item/a-healthy-lifestyle---who-recommendations)
+
+
+
 **Developed By:**
 > Israk Ahmed
