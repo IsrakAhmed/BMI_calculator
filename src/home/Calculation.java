@@ -1,6 +1,7 @@
 package home;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 
 public class Calculation {
 
@@ -93,11 +94,14 @@ public class Calculation {
     }
 
     public String getSuggestion(){
+
+        DecimalFormat df = new DecimalFormat("#.##");
+
         if(minLoose == -1){
-            suggestion = "You have to gain at least " + minGain + "kg";
+            suggestion = "You have to gain at least " + df.format(minGain) + "kg";
         }
         else if(minGain == -1){
-            suggestion = "You have to loose at least " + minLoose + "kg";
+            suggestion = "You have to loose at least " + df.format(minLoose) + "kg";
         }
         else{
             suggestion = "Your weight and height is perfectly balanced";
