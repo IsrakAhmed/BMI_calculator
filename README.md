@@ -4,6 +4,7 @@
 **Description:**
 > This application calculates BMI(Body mass index).
 > BMI is a measure of body fat based on height and weight that applies to adult men and women.
+> This application will also tell the user that how much weight that he/she needs to gain or loss.
 
 
 **BMI Categories:**
