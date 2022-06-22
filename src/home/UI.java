@@ -16,7 +16,7 @@ public class UI {
     JTextField ageT,feet,inch,pounds,resultT;
     JRadioButton genMale,genFemale;
     ButtonGroup bg;
-    JButton usUnits,metricUnits,calculate,clear,back,commentB;
+    JButton usUnits,metricUnits,calculate,clear,back,commentB,perfectWeight,suggestion;
     Color color;
 
     UI(){
@@ -26,8 +26,8 @@ public class UI {
         mainFrame();
     }
 
-    boolean usState = true;
-    boolean metricState = false;
+    static boolean usState = true;
+    static boolean metricState = false;
 
     void mainFrame(){
         mainFrame.setSize(500,680);
@@ -204,7 +204,10 @@ public class UI {
                 String commentM = calculation.getComment();
                 this.color = calculation.getColorName();
 
-                resultFrame(bmi,commentM);
+                double leastWeight = calculation.getLeastWeight();
+                String suggestions = calculation.getSuggestion();
+
+                resultFrame(bmi,commentM,leastWeight,suggestions);
             }
             else{
                 throw new RuntimeException("No gender");
@@ -225,26 +228,26 @@ public class UI {
         pounds.setText("");
     }
 
-    void resultFrame(double bmi,String commentM){
+    void resultFrame(double bmi,String commentM,double leastWeight,String suggestions){
 
         resultFrame.setSize(500,680);
         resultFrame.setLocationRelativeTo(null);
         resultFrame.setLayout(null);
 
         result = new JLabel("BMI");
-        result.setBounds(167,145,200,60);
+        result.setBounds(167,130,200,60);
         result.setFont(new Font("Serif", Font.BOLD, 20));
 
         DecimalFormat df = new DecimalFormat("#.##");
 
         resultT = new JTextField(""+df.format(bmi));
-        resultT.setBounds(243,163,65,25);
+        resultT.setBounds(243,148,65,25);
         resultT.setFont(new Font("Serif", Font.BOLD, 20));
         resultT.setEditable(false);
 
         commentB = new JButton();
         commentB.setText(commentM);
-        commentB.setBounds(162,250,150,35);
+        commentB.setBounds(162,235,150,35);
         commentB.setBackground(color);
         commentB.setRolloverEnabled(false);
         commentB.setBorderPainted(false);
@@ -256,13 +259,48 @@ public class UI {
             commentB.setForeground(new Color(255, 255, 255));
         }
 
-        back.setBounds(162,410,150,35);
+        String tempData = null;
+
+        if(usState){
+            tempData = String.valueOf(df.format((leastWeight / 703.0))) + "lb";
+        }
+        else if(metricState){
+            tempData = String.valueOf(df.format(leastWeight)) + "kg";
+        }
+
+
+        perfectWeight = new JButton(tempData + " will be perfect weight for you");
+        suggestion = new JButton(suggestions);
+
+        if(color.equals(new Color(0, 120, 8))){
+            perfectWeight.setBounds(0,0,0,0);
+            suggestion.setBounds(75,330,330,35);
+        }
+        else{
+            perfectWeight.setBounds(80,330,310,35);
+            suggestion.setBounds(80,380,310,35);
+        }
+
+        perfectWeight.setFont(new Font("Serif", Font.BOLD, 15));
+        perfectWeight.setBackground((new Color(255, 201, 201)));
+        perfectWeight.setForeground(Color.black);
+        perfectWeight.setRolloverEnabled(false);
+        perfectWeight.setBorderPainted(false);
+
+        suggestion.setFont(new Font("Serif", Font.BOLD, 15));
+        suggestion.setBackground((new Color(255, 201, 201)));
+        suggestion.setForeground(Color.black);
+        suggestion.setRolloverEnabled(false);
+        suggestion.setBorderPainted(false);
+
+        back.setBounds(162,460,150,35);
         back.setBackground(Color.darkGray);
         back.setForeground(Color.white);
         back.addActionListener(this::clicked_Back);
 
         resultFrame.add(back); resultFrame.add(commentB);
         resultFrame.add(result); resultFrame.add(resultT);
+        resultFrame.add(perfectWeight); resultFrame.add(suggestion);
 
         resultFrame.add(mainPanel);
 
@@ -282,6 +320,8 @@ public class UI {
         mainFrame.add(mainPanel);
         resultFrame.remove(resultT);
         resultFrame.remove(commentB);
+        resultFrame.remove(perfectWeight);
+        resultFrame.remove(suggestion);
         resultFrame.setVisible(false);
         mainFrame.setVisible(true);
     }
